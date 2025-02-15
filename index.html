@@ -144,6 +144,7 @@
     </div>
 
     <script>
+    document.addEventListener("DOMContentLoaded", function () {
         const chatWindow = document.getElementById('chat-window');
         const messageInput = document.getElementById('message-input');
         const sendButton = document.getElementById('send-button');
@@ -161,16 +162,15 @@
             "tell me a fact": "Did you know? Honey never spoils.",
             "what is the time": () => new Date().toLocaleTimeString(),
             "what is the weather": "Please specify a city for weather updates!",
-            "I am upset":" Do not worry I am here to help you",
-            "I am happy":"That’s awesome! 😊 What made you happy today?",
+            "I am upset": "Do not worry, I am here to help you.",
+            "I am happy": "That’s awesome! 😊 What made you happy today?",
             "I am sad": "I’m sorry to hear that. 💜 Do you want to share what’s on your mind?",
             "I feel lonely": "You’re not alone! 💖 I’m here to chat with you.",
-            "I am excited" : "That’s great! 🎉 What’s making you so excited?",
-            "I feel stressed":"Take a deep breath. 😌 Everything will be okay. Want to talk about it?"
-        
+            "I am excited": "That’s great! 🎉 What’s making you so excited?",
+            "I feel stressed": "Take a deep breath. 😌 Everything will be okay. Want to talk about it?"
         };
 
-        // Add Message to Chat
+        // Function to Add Message to Chat
         function addMessage(text, sender) {
             const messageDiv = document.createElement('div');
             messageDiv.className = `message ${sender}`;
@@ -185,7 +185,7 @@
             chatWindow.scrollTop = chatWindow.scrollHeight;
         }
 
-        // Bot Response Logic
+        // Function to Get Bot Response
         function getBotResponse(userMessage) {
             const lowerMessage = userMessage.toLowerCase();
             if (botResponses[lowerMessage]) {
@@ -201,7 +201,7 @@
             }
         }
 
-        // Fetch Weather Data
+        // Fetch Weather Data (Use Your API Key)
         async function getWeather(city) {
             const apiKey = 'YOUR_API_KEY'; // Replace with your OpenWeatherMap API key
             try {
@@ -234,10 +234,12 @@
 
         // Show Typing Indicator
         function showTypingIndicator() {
-            const typingIndicator = document.createElement('div');
-            typingIndicator.className = 'typing-indicator';
-            typingIndicator.innerHTML = 'Bot is typing...';
-            chatWindow.appendChild(typingIndicator);
+            if (!document.querySelector('.typing-indicator')) {
+                const typingIndicator = document.createElement('div');
+                typingIndicator.className = 'typing-indicator';
+                typingIndicator.innerHTML = 'Bot is typing...';
+                chatWindow.appendChild(typingIndicator);
+            }
         }
 
         // Hide Typing Indicator
@@ -255,43 +257,45 @@
             }
         });
 
+        // Theme Toggle Function
         themeToggle.addEventListener('click', () => {
-    document.body.classList.toggle('dark-theme'); // Toggle the theme class
+            document.body.classList.toggle('dark-theme');
 
-    if (document.body.classList.contains('dark-theme')) {
-        document.body.style.backgroundImage = "url('https://i.pinimg.com/736x/22/97/b9/2297b9a1917f999c4e49247fb3b68d6f.jpg')"; // Light theme background image
-        document.body.style.backgroundRepeat = "no-repeat"; // Prevent repeating
-        document.body.style.backgroundSize = "cover"; // Cover the entire area
-        document.body.style.color = "#000000"; // Light theme text color
-        themeToggle.textContent = "Switch to Dark Theme"; // Update button text
-    } else {
-        document.body.style.backgroundImage = "url('https://i.pinimg.com/736x/0f/33/29/0f33294739309dbabc66eade4e848a6b.jpg')"; // Dark theme background image
-        document.body.style.backgroundRepeat = "no-repeat"; // Prevent repeating
-        document.body.style.backgroundSize = "cover"; // Cover the entire area
-        document.body.style.color = "#ffffff"; // Dark theme text color
-        themeToggle.textContent = "Switch to Light Theme"; // Update button text
-    }
-});
+            if (document.body.classList.contains('dark-theme')) {
+                document.body.style.backgroundImage = "url('https://i.pinimg.com/736x/22/97/b9/2297b9a1917f999c4e49247fb3b68d6f.jpg')";
+                document.body.style.color = "#000000";
+                themeToggle.textContent = "Switch to Light Theme";
+            } else {
+                document.body.style.backgroundImage = "url('https://i.pinimg.com/736x/0f/33/29/0f33294739309dbabc66eade4e848a6b.jpg')";
+                document.body.style.color = "#ffffff";
+                themeToggle.textContent = "Switch to Dark Theme";
+            }
+        });
 
-
-
-        // Speech Recognition (optional)
+        // Speech Function (Optional)
         function speak(message) {
             const speech = new SpeechSynthesisUtterance(message);
             window.speechSynthesis.speak(speech);
         }
 
-        // Set a Custom User Name
+        // Set a Custom User Name Safely
         function setUserName() {
-            const userName = prompt("What's your name?");
-            if (userName) {
-                addMessage(`Hello, ${userName}!`, 'bot');
+            let userName = localStorage.getItem("userName");
+            if (!userName) {
+                userName = prompt("What's your name?");
+                if (userName) {
+                    localStorage.setItem("userName", userName);
+                } else {
+                    userName = "User";
+                }
             }
+            addMessage(`Hello, ${userName}!`, 'bot');
         }
 
-        setUserName(); // Call the function to set the user's name
+        setUserName();
+    });
+</script>
 
-    </script>
 </body>
 </html>
 
